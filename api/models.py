@@ -1,4 +1,6 @@
 from django.db import models
+from django.template.defaultfilters import slugify
+from api.utils import intToRoman
 
 class Person(models.Model):
     first_name = models.CharField(max_length=200)
@@ -29,12 +31,17 @@ class Alias(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=200)
     release_year = models.SmallIntegerField()
+    slug = models.SlugField(blank=True)
     members = models.ManyToManyField(Person,
         through='Role',
         through_fields=('movie', 'person'))
 
+    def save(self, **kwargs):
+        self.slug = slugify(self.title) 
+        super(Movie, self).save(**kwargs)
+
     @property
-    def actors(self):
+    def casting(self):
         persons = self.members.filter(movie_person__role='A').get()
         return persons
 
@@ -47,6 +54,10 @@ class Movie(models.Model):
     def producers(self):
         persons = self.members.filter(movie_person__role='P').get()
         return persons
+
+    @property
+    def release_year_roman(self):
+        return intToRoman(self.release_year)
 
 class Role(models.Model):
     PERSON_MOVIE_ROLES = [
