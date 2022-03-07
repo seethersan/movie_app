@@ -12,9 +12,9 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PersonSerializer(serializers.ModelSerializer):
-    movies_as_actor = serializers.ReadOnlyField()
-    movies_as_director = serializers.ReadOnlyField()
-    movies_as_producer = serializers.ReadOnlyField()
+    movies_as_actor = serializers.ListField()
+    movies_as_director = serializers.ListField()
+    movies_as_producer = serializers.ListField()
 
     aliases = AliasSerializer(read_only=True)
 
@@ -23,12 +23,11 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class MovieSerializer(serializers.ModelSerializer):
-    casting = serializers.ReadOnlyField()
-    directors = serializers.ReadOnlyField()
-    producers = serializers.ReadOnlyField()
+    casting = serializers.ListField()
+    directors = serializers.ListField()
+    producers = serializers.ListField()
     release_year_roman = serializers.ReadOnlyField()
 
     class Meta:
         model = Movie
-        fields = "__all__"
-
+        fields = ['title', 'release_year', 'release_year_roman', 'slug', 'casting', 'directors', 'producers']

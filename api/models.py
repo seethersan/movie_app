@@ -1,6 +1,20 @@
 from django.db import models
+from django.core import serializers
 from django.template.defaultfilters import slugify
 from api.utils import intToRoman
+
+def convert_person_to_dict(person):
+    return {
+        'first_name': person.first_name,
+        'last_name': person.last_name
+    }
+
+def convert_movie_to_dict(movie):
+    return {
+        'title': movie.title,
+        'release_year': int(movie.release_year),
+        'slug': movie.slug
+    }
 
 class Person(models.Model):
     first_name = models.CharField(max_length=200)
@@ -8,18 +22,21 @@ class Person(models.Model):
     
     @property
     def movies_as_actor(self):
-        movies = self.movie_set.filter(movie_person__role='A').get()
-        return movies
+        movies = self.movie_set.filter(movie_person__role='A').all()
+        actored_movies = [convert_movie_to_dict(movie) for movie in movies]
+        return actored_movies
 
     @property
     def movies_as_director(self):
-        movies = self.movie_set.filter(movie_person__role='D').get()
-        return movies
+        movies = self.movie_set.filter(movie_person__role='D').all()
+        directed_movies = [convert_movie_to_dict(movie) for movie in movies]
+        return directed_movies
 
     @property
     def movies_as_producer(self):
-        movies = self.movie_set.filter(movie_person__role='P').get()
-        return movies
+        movies = self.movie_set.filter(movie_person__role='P').all()
+        produced_movies = [convert_movie_to_dict(movie) for movie in movies]
+        return produced_movies
 
 class Alias(models.Model):
     name = models.CharField(max_length=200)
@@ -42,18 +59,21 @@ class Movie(models.Model):
 
     @property
     def casting(self):
-        persons = self.members.filter(movie_person__role='A').get()
-        return persons
+        persons = self.members.filter(movie_person__role='A').all()
+        casting = [convert_person_to_dict(person) for person in persons]
+        return casting
 
     @property
     def directors(self):
-        persons = self.members.filter(movie_person__role='D').get()
-        return persons
+        persons = self.members.filter(movie_person__role='D').all()
+        directors = [convert_person_to_dict(person) for person in persons]
+        return directors
 
     @property
     def producers(self):
-        persons = self.members.filter(movie_person__role='P').get()
-        return persons
+        persons = self.members.filter(movie_person__role='P').all()
+        producers = [convert_person_to_dict(person) for person in persons]
+        return producers
 
     @property
     def release_year_roman(self):
