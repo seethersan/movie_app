@@ -6,7 +6,7 @@ urlpatterns = [
         'get': 'list',
         'post': 'create'
     })),
-    path('appications/<int:pk>', MovieViewSet.as_view({
+    path('movies/<int:pk>', MovieViewSet.as_view({
         'get': 'retrieve',
         'put': 'update',
         'delete': 'destroy'
