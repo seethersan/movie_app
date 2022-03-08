@@ -1,12 +1,12 @@
 from django.urls import path
-from api.views import RoleViewSet, PersonViewSet
+from api.views import RoleViewSet, PersonViewSet, MovieViewSet
 
 urlpatterns = [
-    path('roles', RoleViewSet.as_view({
+    path('movies', MovieViewSet.as_view({
         'get': 'list',
         'post': 'create'
     })),
-    path('roles/<int:pk>', RoleViewSet.as_view({
+    path('movies/<int:pk>', MovieViewSet.as_view({
         'get': 'retrieve',
         'put': 'update',
         'delete': 'destroy'
