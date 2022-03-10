@@ -1,9 +1,26 @@
 from rest_framework import serializers
-from api.models import Alias, Person, Movie, Role
+from api.models import Alias, Person, Movie, Role, Reward, Profile, ProfileReward
 
 class AliasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alias
+        fields = '__all__'
+
+class RewardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reward
+        fields = '__all__'
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+class ProfileRewardSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    
+    class Meta:
+        model = ProfileReward
         fields = '__all__'
 
 class RoleSerializer(serializers.ModelSerializer):
