@@ -20,26 +20,13 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-def convert_person_to_dict(person):
-    return {
-        'id': person.id,
-        'first_name': person.first_name,
-        'last_name': person.last_name
-    }
-
-def convert_movie_to_dict(movie):
-    return {
-        'id': movie.id,
-        'title': movie.title,
-        'release_year': int(movie.release_year),
-        'slug': movie.slug,
-        'release_year_roman': movie.release_year_roman
-    }
-
 class Person(models.Model):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     created_by = models.ForeignKey(Profile, on_delete=models.SET_NULL, null= True)
+
+    def __str__(self):
+        return "{} {}".format(self.first_name, self.last_name)
 
     @property
     def movies_as_actor(self):
@@ -76,6 +63,9 @@ class Movie(models.Model):
         self.slug = slugify(self.title)
         super(Movie, self).save(**kwargs)
 
+    def __str__(self):
+        return self.title
+
     @property
     def casting(self):
         persons = self.members.filter(movie_person__role='A').values()
@@ -109,12 +99,18 @@ class Reward(models.Model):
     entity_type = models.CharField(max_length=1, choices=ENTITY_TYPE, primary_key=True)
     amount = models.FloatField()
 
+    def __str__(self):
+        return self.entity_type
+
 class ProfileReward(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='profile_reward')
     entity_type = models.CharField(max_length=1, choices=ENTITY_TYPE)
     entity_data = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     amount = models.FloatField()
+
+    def __str__(self):
+        return self.profile.user.username
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created=False, **kwargs):
